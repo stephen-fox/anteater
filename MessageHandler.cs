@@ -3,14 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
+using System.IO;
 
 namespace Anteater
 {
-    public partial class GetMessageType
+    class GetTypes
     {
-        public GetMessageType(string msgText)
+        public static string[] messageTypes()
         {
-            // TODO: Complete member initialization
+            var streamData = new List<string>();
+            var assembly = Assembly.GetExecutingAssembly();
+            var mtRes = "anteater.messageTypes.txt";
+            using (Stream stream = assembly.GetManifestResourceStream(mtRes))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    streamData.Add(line);
+                }
+            }
+            string[] streamDataFinal = streamData.ToArray();
+            return streamDataFinal;
+        }
+    }
+    class MessageType
+    {
+        public void DetermineType(string msg)
+        {
+            string message = msg;
         }
     }
 }
