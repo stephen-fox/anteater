@@ -8,9 +8,9 @@ using System.IO;
 
 namespace Anteater
 {
-    class GetTypes
+    public static class MessageTypes
     {
-        public static string[] messageTypes()
+        public static string[] availableMsgTypes()
         {
             var streamData = new List<string>();
             var assembly = Assembly.GetExecutingAssembly();
@@ -27,12 +27,19 @@ namespace Anteater
             string[] streamDataFinal = streamData.ToArray();
             return streamDataFinal;
         }
-    }
-    class MessageType
-    {
-        public void DetermineType(string msg)
+        public static string msgType(string msg, string[] msgTypes)
         {
             string message = msg;
+            string[] messageTypes = msgTypes;
+            return message;
+        }
+    }
+    public static class Blah
+    {
+        public static string Type(string msg, string[] msgTypes)
+        {
+            string message = msg;
+            return message;
         }
     }
 }

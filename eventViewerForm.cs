@@ -60,9 +60,10 @@ namespace Anteater
             FileStream logFileStream = new FileStream(inputfile, FileMode.Open, 
                 FileAccess.Read, FileShare.ReadWrite);
             StreamReader LogsFile = new StreamReader(logFileStream);
-
+            
             var lineCount = File.ReadLines(inputfile).Count();
             int lineNumber = 0;
+            string[] msgTypes = MessageTypes.availableMsgTypes();
             while (!LogsFile.EndOfStream)
             {
                 lineNumber = lineNumber + 1;
