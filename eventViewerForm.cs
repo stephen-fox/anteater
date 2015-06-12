@@ -100,10 +100,9 @@ namespace Anteater
             string msgText, string msgType)
         {
             TreeNode messageNode = new TreeNode(msgText);
-            TreeNode parentNode = null;
             if (!String.IsNullOrEmpty(msgType))
             {
-                parentNode = new TreeNode(msgType);
+                TreeNode[] parentNode = treeView1.Nodes.Find(msgType, false);
                 UpdateTreeView(null, parentNode, messageNode);
             }
 
@@ -118,14 +117,15 @@ namespace Anteater
         // Dump the buffer for all log messages onto the treeView.
         private void DumpAllMsgsBuffer()
         {
-            TreeNode targetNode = new TreeNode("All Log Messages");
+            string target = "All Log Messages";
+            TreeNode[] parentNode = treeView1.Nodes.Find(target, false);
             var nodeBuffer = allMsgsQueue.ToArray();
             allMsgsQueue.Clear();
-            UpdateTreeView(nodeBuffer, targetNode, null);
+            UpdateTreeView(nodeBuffer, parentNode, null);
         }
 
         // Add the requested nodes to the tree.
-        private void UpdateTreeView(TreeNode[] multipleNodes, TreeNode parentNode, 
+        private void UpdateTreeView(TreeNode[] multipleNodes, TreeNode[] parentNode, 
             TreeNode singleNode)
         {
             Invoke(new Action(() =>
@@ -141,13 +141,21 @@ namespace Anteater
                 {
                     // For situtations where we need to add multiple
                     // nodes to a parent node.
-                    parentNode.Nodes.AddRange(multipleNodes);
+                    //parentNode.Nodes.AddRange(multipleNodes);
+                    foreach (var i in parentNode)
+                    {
+                        i.Nodes.AddRange(multipleNodes);
+                    }
                 }
                 else if (singleNode != null && parentNode != null)
                 {
                     // For sitatuions where we need to add a single
                     // node to a parent node.
-                    parentNode.Nodes.Add(singleNode);
+                    //parentNode.Nodes.Add(singleNode);
+                    foreach (var i in parentNode)
+                    {
+                        i.Nodes.Add(singleNode);
+                    }
                 }
                 treeView1.EndUpdate();
             }));
