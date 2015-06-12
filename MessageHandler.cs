@@ -14,7 +14,7 @@ namespace Anteater
         {
             var streamData = new List<string>();
             var assembly = Assembly.GetExecutingAssembly();
-            var mtRes = "anteater.messageTypes.txt";
+            var mtRes = "Anteater.messageTypes.txt";
             using (Stream stream = assembly.GetManifestResourceStream(mtRes))
             using (StreamReader reader = new StreamReader(stream))
             {
@@ -41,15 +41,6 @@ namespace Anteater
                 }
             }
             return type;
-        }
-    }
-
-    public static class Blah
-    {
-        public static string Type(string msg, string[] msgTypes)
-        {
-            string message = msg;
-            return message;
         }
     }
 }

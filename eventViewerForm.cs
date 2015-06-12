@@ -62,61 +62,105 @@ namespace Anteater
                 FileAccess.Read, FileShare.ReadWrite);
             StreamReader LogsFile = new StreamReader(logFileStream);
             
-            var lineCount = File.ReadLines(inputfile).Count();
+            int lineCount = File.ReadLines(inputfile).Count();
             int lineNumber = 0;
             string[] msgTypes = MessageTypes.availableMsgTypes();
+            AddPrimaryNodes(msgTypes);
             while (!LogsFile.EndOfStream)
             {
                 lineNumber = lineNumber + 1;
                 string msgText = LogsFile.ReadLine();
                 string msgType = MessageTypes.msgType(msgText, msgTypes);
-                AddTreeViewNode(lineCount, lineNumber, msgText);
+                AddTreeViewNode(lineCount, lineNumber, msgText, msgType);
             }
         }
+
+        // Create a list for primary nodes.
+        List<TreeNode> primaryMsgsQueue = new List<TreeNode>();
 
         // Create primary nodes so that we can categorize log messages.
-        private void AddPrimaryNodes(string[] messageTypes)
+        private void AddPrimaryNodes(string[] msgTypes)
         {
-            foreach (string type in messageTypes)
+            foreach (string type in msgTypes)
             {
                 TreeNode typeNode = new TreeNode(type);
+                primaryMsgsQueue.Add(typeNode);
             }
             TreeNode fullLog = new TreeNode("All Log Messages");
+            primaryMsgsQueue.Add(fullLog);
+            var primaryNodes = primaryMsgsQueue.ToArray();
+            UpdateTreeView(primaryNodes, null, null);
         }
 
-        // Create a list and use it as a buffer for nodes.
-        List<TreeNode> nodeQueue = new List<TreeNode>(1000);
+        // Create a list for new nodes and use it as a buffer.
+        List<TreeNode> allMsgsQueue = new List<TreeNode>(1000);
 
         // Add nodes to the treeView.
-        private void AddTreeViewNode(int lineCount, int lineNumber, string msgText)
+        private void AddTreeViewNode(int lineCount, int lineNumber, 
+            string msgText, string msgType)
         {
-            TreeNode newNode = new TreeNode(msgText);
-            
-            nodeQueue.Add(newNode);
-            if (nodeQueue.Count == 1000)
+            TreeNode messageNode = new TreeNode(msgText);
+            TreeNode parentNode = null;
+            if (!String.IsNullOrEmpty(msgType))
             {
-                // Dump the buffer if it hits its limit.
-                DumpNodeBuffer();
+                parentNode = new TreeNode(msgType);
+                UpdateTreeView(null, parentNode, messageNode);
             }
-            else if (lineNumber == lineCount)
+
+            allMsgsQueue.Add(messageNode);
+            if (allMsgsQueue.Count == 1000 || lineNumber == lineCount)
             {
-                // Dump the buffer if it we hit the end of the file.
-                DumpNodeBuffer();
+                // Dump the buffer.
+                DumpAllMsgsBuffer();
             }
         }
 
-        // Dump the node buffer onto the treeView.
-        private void DumpNodeBuffer()
+        // Dump the buffer for all log messages onto the treeView.
+        private void DumpAllMsgsBuffer()
         {
-            var nodeBuffer = nodeQueue.ToArray();
-            nodeQueue.Clear();
-            Invoke(new Action(() =>
+            TreeNode targetNode = new TreeNode("All Log Messages");
+            var nodeBuffer = allMsgsQueue.ToArray();
+            allMsgsQueue.Clear();
+            UpdateTreeView(nodeBuffer, targetNode, null);
+        }
+
+        // Add the requested nodes to the tree.
+        private void UpdateTreeView(TreeNode[] multipleNodes, TreeNode parentNode, 
+            TreeNode singleNode)
+        {
+            if (parentNode == null)
+            //if (parentNode.Name.Contains("All Log Messages") || parentNode == null)
             {
-                treeView1.BeginUpdate();
-                treeView1.Nodes.AddRange(nodeBuffer);
-                treeView1.EndUpdate();
-            }));
-            System.Threading.Thread.Sleep(500);
+                // For situations where we need to add a lot of nodes to 
+                // the treeView.
+                Invoke(new Action(() =>
+                {
+                    treeView1.BeginUpdate();
+                    if (parentNode != null)
+                    {
+                        // When we need to add multiple nodes to a target.
+                        parentNode.Nodes.AddRange(multipleNodes);
+                    }
+                    else if (multipleNodes != null)
+                    {
+                        // Or when we need to add multiple nodes to the 
+                        // general treeView.
+                        treeView1.Nodes.AddRange(multipleNodes);
+                    }
+                    treeView1.EndUpdate();
+                }));
+                System.Threading.Thread.Sleep(500);
+            }
+            else if (singleNode != null)
+            {
+                Invoke(new Action(() =>
+                {
+                    treeView1.BeginUpdate();
+                    parentNode.Nodes.Add(singleNode);
+                    treeView1.EndUpdate();
+                }));
+                System.Threading.Thread.Sleep(500);
+            }
         }
     }
 }
