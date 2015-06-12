@@ -71,7 +71,7 @@ namespace Anteater
                 lineNumber = lineNumber + 1;
                 string msgText = LogsFile.ReadLine();
                 string msgType = MessageTypes.msgType(msgText, msgTypes);
-                AddTreeViewNode(lineCount, lineNumber, msgText, msgType);
+                AddMsgNode(lineCount, lineNumber, msgText, msgType);
             }
         }
 
@@ -96,7 +96,7 @@ namespace Anteater
         List<TreeNode> allMsgsQueue = new List<TreeNode>(1000);
 
         // Add nodes to the treeView.
-        private void AddTreeViewNode(int lineCount, int lineNumber, 
+        private void AddMsgNode(int lineCount, int lineNumber, 
             string msgText, string msgType)
         {
             TreeNode messageNode = new TreeNode(msgText);
@@ -128,39 +128,62 @@ namespace Anteater
         private void UpdateTreeView(TreeNode[] multipleNodes, TreeNode parentNode, 
             TreeNode singleNode)
         {
-            if (parentNode == null)
-            //if (parentNode.Name.Contains("All Log Messages") || parentNode == null)
+            Invoke(new Action(() =>
             {
+                treeView1.BeginUpdate();
+                if (multipleNodes != null && parentNode == null)
+                {
+                    // For situations where we need to add nodes directly
+                    // to the treeView.
+                    treeView1.Nodes.AddRange(multipleNodes);
+                }
+                else if (multipleNodes != null && parentNode != null)
+                {
+                    // For situtations where we need to add multiple
+                    // nodes to a parent node.
+                    parentNode.Nodes.AddRange(multipleNodes);
+                }
+                else if (singleNode != null && parentNode != null)
+                {
+                    // For sitatuions where we need to add a single
+                    // node to a parent node.
+                    parentNode.Nodes.Add(singleNode);
+                }
+                treeView1.EndUpdate();
+            }));
+            System.Threading.Thread.Sleep(500);
+            //if (parentNode == null)
+            //{
                 // For situations where we need to add a lot of nodes to 
                 // the treeView.
-                Invoke(new Action(() =>
-                {
-                    treeView1.BeginUpdate();
-                    if (parentNode != null)
-                    {
-                        // When we need to add multiple nodes to a target.
-                        parentNode.Nodes.AddRange(multipleNodes);
-                    }
-                    else if (multipleNodes != null)
-                    {
-                        // Or when we need to add multiple nodes to the 
-                        // general treeView.
-                        treeView1.Nodes.AddRange(multipleNodes);
-                    }
-                    treeView1.EndUpdate();
-                }));
-                System.Threading.Thread.Sleep(500);
-            }
-            else if (singleNode != null)
-            {
-                Invoke(new Action(() =>
-                {
-                    treeView1.BeginUpdate();
-                    parentNode.Nodes.Add(singleNode);
-                    treeView1.EndUpdate();
-                }));
-                System.Threading.Thread.Sleep(500);
-            }
+                //Invoke(new Action(() =>
+                //{
+                //    treeView1.BeginUpdate();
+                //    if (parentNode != null)
+                //    {
+                //        // When we need to add multiple nodes to a target.
+                //        parentNode.Nodes.AddRange(multipleNodes);
+                //    }
+                //    else if (multipleNodes != null)
+                //    {
+                //        // Or when we need to add multiple nodes to the 
+                //        // general treeView.
+                //        treeView1.Nodes.AddRange(multipleNodes);
+                //    }
+                //    treeView1.EndUpdate();
+                //}));
+                //System.Threading.Thread.Sleep(500);
+            //}
+            //else if (singleNode != null)
+            //{
+            //    Invoke(new Action(() =>
+            //    {
+            //        treeView1.BeginUpdate();
+            //        parentNode.Nodes.Add(singleNode);
+            //        treeView1.EndUpdate();
+            //    }));
+            //    System.Threading.Thread.Sleep(500);
+            //}
         }
     }
 }
