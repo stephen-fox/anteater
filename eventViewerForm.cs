@@ -20,7 +20,7 @@ namespace Anteater
             InitializeComponent();
         }
 
-        // Open file dialog creation.
+        // Create an Open file dialog so the user can select a log file to view.
         private void openLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //http://www.c-sharpcorner.com/uploadfile/mahesh/openfiledialog-in-C-Sharp/
@@ -55,6 +55,7 @@ namespace Anteater
             }
         }
 
+        // Read through the log file and add nodes.
         private void ParseFile(string inputfile)
         {
             FileStream logFileStream = new FileStream(inputfile, FileMode.Open, 
@@ -68,15 +69,25 @@ namespace Anteater
             {
                 lineNumber = lineNumber + 1;
                 string msgText = LogsFile.ReadLine();
-                //TODO: Actually write this class.
-                //Message msg = new Message(Msgtxt.Substring(26)); 
-                    //Reads the text into a class with appropriate members
+                string msgType = MessageTypes.msgType(msgText, msgTypes);
                 AddTreeViewNode(lineCount, lineNumber, msgText);
             }
         }
 
+        // Create primary nodes so that we can categorize log messages.
+        private void AddPrimaryNodes(string[] messageTypes)
+        {
+            foreach (string type in messageTypes)
+            {
+                TreeNode typeNode = new TreeNode(type);
+            }
+            TreeNode fullLog = new TreeNode("All Log Messages");
+        }
+
         // Create a list and use it as a buffer for nodes.
         List<TreeNode> nodeQueue = new List<TreeNode>(1000);
+
+        // Add nodes to the treeView.
         private void AddTreeViewNode(int lineCount, int lineNumber, string msgText)
         {
             TreeNode newNode = new TreeNode(msgText);
@@ -94,15 +105,15 @@ namespace Anteater
             }
         }
 
-        // Dump the buffer onto the treeView.
+        // Dump the node buffer onto the treeView.
         private void DumpNodeBuffer()
         {
-            var buffer = nodeQueue.ToArray();
+            var nodeBuffer = nodeQueue.ToArray();
             nodeQueue.Clear();
             Invoke(new Action(() =>
             {
                 treeView1.BeginUpdate();
-                treeView1.Nodes.AddRange(buffer);
+                treeView1.Nodes.AddRange(nodeBuffer);
                 treeView1.EndUpdate();
             }));
             System.Threading.Thread.Sleep(500);

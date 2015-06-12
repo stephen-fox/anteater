@@ -27,13 +27,23 @@ namespace Anteater
             string[] streamDataFinal = streamData.ToArray();
             return streamDataFinal;
         }
+
         public static string msgType(string msg, string[] msgTypes)
         {
             string message = msg;
             string[] messageTypes = msgTypes;
-            return message;
+            string type = string.Empty;
+            foreach (string s in msgTypes)
+            {
+                if (msg.Contains(s))
+                {
+                    type = s;
+                }
+            }
+            return type;
         }
     }
+
     public static class Blah
     {
         public static string Type(string msg, string[] msgTypes)
