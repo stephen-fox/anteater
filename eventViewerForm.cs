@@ -65,68 +65,72 @@ namespace Anteater
             int lineCount = File.ReadLines(inputfile).Count();
             int lineNumber = 0;
             string[] msgTypes = MessageTypes.availableMsgTypes();
-            AddPrimaryNodes(msgTypes);
+            CreatePrimaryNodes(msgTypes);
             while (!LogsFile.EndOfStream)
             {
                 lineNumber = lineNumber + 1;
                 string msgText = LogsFile.ReadLine();
                 string msgType = MessageTypes.msgType(msgText, msgTypes);
-                AddMsgNode(lineCount, lineNumber, msgText, msgType);
+                CreateMsgsNodes(lineCount, lineNumber, msgText, msgType);
             }
+            MessageBox.Show("Finished reading file");
         }
 
         // Create a list for primary nodes.
         List<TreeNode> primaryMsgsQueue = new List<TreeNode>();
 
         // Create primary nodes so that we can categorize log messages.
-        private void AddPrimaryNodes(string[] msgTypes)
+        private void CreatePrimaryNodes(string[] msgTypes)
         {
             foreach (string type in msgTypes)
             {
                 TreeNode typeNode = new TreeNode(type);
+                typeNode.Name = type;
                 primaryMsgsQueue.Add(typeNode);
             }
             TreeNode fullLog = new TreeNode("All Log Messages");
+            // If this breaks, then it used to be "All Log Messages"
+            fullLog.Name = fullLog.Text;
             primaryMsgsQueue.Add(fullLog);
-            var primaryNodes = primaryMsgsQueue.ToArray();
-            UpdateTreeView(primaryNodes, null, null);
+            DumpNodeBuffer(primaryMsgsQueue, null, null, null);
         }
 
         // Create a list for new nodes and use it as a buffer.
         List<TreeNode> allMsgsQueue = new List<TreeNode>(1000);
 
         // Add nodes to the treeView.
-        private void AddMsgNode(int lineCount, int lineNumber, 
+        private void CreateMsgsNodes(int lineCount, int lineNumber, 
             string msgText, string msgType)
         {
             TreeNode messageNode = new TreeNode(msgText);
             if (!String.IsNullOrEmpty(msgType))
             {
-                TreeNode[] parentNode = treeView1.Nodes.Find(msgType, false);
-                UpdateTreeView(null, parentNode, messageNode);
+                string parentNode = msgType;
+                UpdateTreeView(null, parentNode, msgText);
             }
 
             allMsgsQueue.Add(messageNode);
+            //MessageBox.Show("Calling UI dump");
             if (allMsgsQueue.Count == 1000 || lineNumber == lineCount)
             {
                 // Dump the buffer.
-                DumpAllMsgsBuffer();
+                DumpNodeBuffer(allMsgsQueue, null, null, null);
             }
         }
 
         // Dump the buffer for all log messages onto the treeView.
-        private void DumpAllMsgsBuffer()
+        private void DumpNodeBuffer(List<TreeNode> list, TreeNode[] multNodes,
+            string parentNode, string singleNode)
         {
-            string target = "All Log Messages";
-            TreeNode[] parentNode = treeView1.Nodes.Find(target, false);
-            var nodeBuffer = allMsgsQueue.ToArray();
-            allMsgsQueue.Clear();
-            UpdateTreeView(nodeBuffer, parentNode, null);
+            var nodeBuffer = list.ToArray();
+            //string parentNode = "All Log Messages";
+            list.Clear();
+            UpdateTreeView(nodeBuffer, parentNode, singleNode);
         }
 
         // Add the requested nodes to the tree.
-        private void UpdateTreeView(TreeNode[] multipleNodes, TreeNode[] parentNode, 
-            TreeNode singleNode)
+        private void UpdateTreeView(TreeNode[] multipleNodes, string parentNode, 
+            string singleNode)
         {
             Invoke(new Action(() =>
             {
@@ -141,57 +145,17 @@ namespace Anteater
                 {
                     // For situtations where we need to add multiple
                     // nodes to a parent node.
-                    //parentNode.Nodes.AddRange(multipleNodes);
-                    foreach (var i in parentNode)
-                    {
-                        i.Nodes.AddRange(multipleNodes);
-                    }
+                    treeView1.Nodes[parentNode].Nodes.AddRange(multipleNodes);
                 }
                 else if (singleNode != null && parentNode != null)
                 {
                     // For sitatuions where we need to add a single
                     // node to a parent node.
-                    //parentNode.Nodes.Add(singleNode);
-                    foreach (var i in parentNode)
-                    {
-                        i.Nodes.Add(singleNode);
-                    }
+                    treeView1.Nodes[parentNode].Nodes.Add(singleNode);
                 }
                 treeView1.EndUpdate();
             }));
             System.Threading.Thread.Sleep(500);
-            //if (parentNode == null)
-            //{
-                // For situations where we need to add a lot of nodes to 
-                // the treeView.
-                //Invoke(new Action(() =>
-                //{
-                //    treeView1.BeginUpdate();
-                //    if (parentNode != null)
-                //    {
-                //        // When we need to add multiple nodes to a target.
-                //        parentNode.Nodes.AddRange(multipleNodes);
-                //    }
-                //    else if (multipleNodes != null)
-                //    {
-                //        // Or when we need to add multiple nodes to the 
-                //        // general treeView.
-                //        treeView1.Nodes.AddRange(multipleNodes);
-                //    }
-                //    treeView1.EndUpdate();
-                //}));
-                //System.Threading.Thread.Sleep(500);
-            //}
-            //else if (singleNode != null)
-            //{
-            //    Invoke(new Action(() =>
-            //    {
-            //        treeView1.BeginUpdate();
-            //        parentNode.Nodes.Add(singleNode);
-            //        treeView1.EndUpdate();
-            //    }));
-            //    System.Threading.Thread.Sleep(500);
-            //}
         }
     }
 }
