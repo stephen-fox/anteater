@@ -10,7 +10,7 @@ namespace Anteater
 {
     public static class MessageTypes
     {
-        public static string[] availableMsgTypes()
+        public static string[] getMsgTypes()
         {
             var streamData = new List<string>();
             var assembly = Assembly.GetExecutingAssembly();
@@ -28,7 +28,7 @@ namespace Anteater
             return streamDataFinal;
         }
 
-        public static string msgType(string msg, string[] msgTypes)
+        public static string setMsgType(string msg, string[] msgTypes)
         {
             string type = null;
             if (msgTypes != null)

@@ -77,90 +77,115 @@ namespace Anteater
         private void ParseFile(string inputfile)
         {
             FileStream logFileStream = new FileStream(inputfile, FileMode.Open, 
-                FileAccess.Read, FileShare.ReadWrite);
+                                           FileAccess.Read, FileShare.ReadWrite);
             StreamReader LogsFile = new StreamReader(logFileStream);
             
             int lineCount = File.ReadLines(inputfile).Count();
             int lineNumber = 0;
-            string[] msgTypes = MessageTypes.availableMsgTypes();
-            CreatePrimaryNodes(msgTypes);
+            string[] messageTypes = MessageTypes.getMsgTypes();
+            CreateCategoryNodes(messageTypes);
             while (!LogsFile.EndOfStream)
             {
                 lineNumber = lineNumber + 1;
                 string msgText = LogsFile.ReadLine();
-                string msgType = MessageTypes.msgType(msgText, msgTypes);
+                string msgType = MessageTypes.setMsgType(msgText, messageTypes);
                 CreateMsgNode(lineCount, lineNumber, msgText, msgType);
             }
         }
 
-        // Create a list for primary nodes.
-        List<TreeNode> primaryMsgsQueue = new List<TreeNode>();
-
-        // Create primary nodes so that we can categorize log messages.
-        private void CreatePrimaryNodes(string[] msgTypes)
+        // Create category nodes so that we can categorize log messages.
+        private void CreateCategoryNodes(string[] msgTypes)
         {
             foreach (string type in msgTypes)
             {
                 TreeNode typeNode = new TreeNode(type);
-                typeNode.Name = type;
-                primaryMsgsQueue.Add(typeNode);
+                typeNode.Name = typeNode.Text;
+                typeNode.Tag = null;
+                AuditNodeBuffer(typeNode, 1, 2);
             }
-            TreeNode fullLog = new TreeNode("All Log Messages");
-            // If this breaks, then it used to be "All Log Messages"
-            fullLog.Name = fullLog.Text;
-            primaryMsgsQueue.Add(fullLog);
-            UpdateTreeView(primaryMsgsQueue.ToArray(), null, null);
-            primaryMsgsQueue.Clear();
+            TreeNode fullLogNode = new TreeNode("All Log Messages");
+            fullLogNode.Name = fullLogNode.Text;
+            fullLogNode.Tag = null;
+            // Give junk lineNumber and lineCount. We only want to add
+            // to the buffer, not add to and dump the buffer!
+            AuditNodeBuffer(fullLogNode, 1, 2);
         }
-
-        // Create a list for new nodes and use it as a buffer.
-        List<TreeNode> allMsgsQueue = new List<TreeNode>(1000);
-
-        // Add nodes to the treeView.
+        
+        // Create nodes for individual log messages.
         private void CreateMsgNode(int lineCount, int lineNumber, 
-            string msgText, string msgType)
+                                    string msgText, string msgType)
         {
-            TreeNode messageNode = new TreeNode(msgText);
+            string msgNodeText = "Line " + lineNumber + ": " + msgText;
+            TreeNode messageNode = new TreeNode(msgNodeText);
+            messageNode.Name = messageNode.Text;
+            string allLogMsgs = "All Log Messages";
             if (!String.IsNullOrEmpty(msgType))
             {
-                UpdateTreeView(null, msgType, msgText);
+                // If the message has a msgType, tag the node with the msgType
+                // node name.
+                messageNode.Tag = msgType;
             }
-
-            allMsgsQueue.Add(messageNode);
-            if (allMsgsQueue.Count == 1000 || lineNumber == lineCount)
+            else
             {
-                // Dump the buffer for all messages.
-                string parentNode = "All Log Messages";
-                TreeNode[] nodeBuffer = allMsgsQueue.ToArray();
-                UpdateTreeView(nodeBuffer, parentNode, null);
-                allMsgsQueue.Clear();
+                // If the message does not have a msgType, then tag it with
+                // the node name for all log messages.
+                messageNode.Tag = allLogMsgs;
+            }
+            // Add the message to the buffer.
+            AuditNodeBuffer(messageNode, lineNumber, lineCount);
+        }
+
+        // Create a TreeNode List and use it as a buffer for nodes.
+        List<TreeNode> nodeBuffer = new List<TreeNode>(1000);
+        // Add the requested node to the buffer. Dump the buffer onto the UI
+        // in certain situations.
+        private void AuditNodeBuffer(TreeNode node, int lineNumber, int lineCount)
+        {
+            nodeBuffer.Add(node);
+            if (nodeBuffer.Count == nodeBuffer.Capacity || lineNumber == lineCount)
+            {
+                TreeNode[] nodeDump = nodeBuffer.ToArray();
+                nodeBuffer.Clear();
+                UpdateTreeView(nodeDump);
             }
         }
 
         // Add the requested nodes to the tree.
-        private void UpdateTreeView(TreeNode[] multipleNodes, string parentNode, 
-            string singleNode)
+        private void UpdateTreeView(TreeNode[] nodeBuffer)
         {
+            string allMsgsNode = "All Log Messages";
             Invoke(new Action(() =>
             {
                 treeView.BeginUpdate();
-                if (multipleNodes != null && parentNode == null)
+                foreach (TreeNode node in nodeBuffer)
                 {
-                    // For situations where we need to add nodes directly
-                    // to the treeView.
-                    treeView.Nodes.AddRange(multipleNodes);
-                }
-                else if (multipleNodes != null && parentNode != null)
-                {
-                    // For situtations where we need to add multiple
-                    // nodes to a parent node.
-                    treeView.Nodes[parentNode].Nodes.AddRange(multipleNodes);
-                }
-                else if (singleNode != null && parentNode != null)
-                {
-                    // For sitatuions where we need to add a single
-                    // node to a parent node.
-                    treeView.Nodes[parentNode].Nodes.Add(singleNode);
+                    if (node.Tag == null)
+                    {
+                        // If the tag is null, then just slap it into the
+                        // treeView as a root node.
+                        treeView.Nodes.Add(node);
+                    }
+                    else
+                    {
+                        string parentNode = node.Tag.ToString();
+                        if (parentNode.Equals(allMsgsNode))
+                        {
+                            // If the node's tag is the all messages category,
+                            // then add it to that node.
+                            treeView.Nodes[parentNode].Nodes.Add(node);
+                        }
+                        else
+                        {
+                            // If the node's tag is not the all messages
+                            // category, then add a clone of the node to the
+                            // specified node in the tag. Add the original node
+                            // to the all messages node.
+                            TreeNode clonedNode = (TreeNode) node.Clone();
+                            treeView.Nodes[parentNode].Nodes.Add(clonedNode);
+                            treeView.Nodes[allMsgsNode].Nodes.Add(node);
+                        }
+
+                    }
                 }
                 treeView.EndUpdate();
             }));
