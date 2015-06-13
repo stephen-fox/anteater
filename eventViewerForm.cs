@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows;
 
 namespace Anteater
 {
@@ -62,15 +61,13 @@ namespace Anteater
             clearTreeView();
         }
 
-        // Clears the treeView control of all nodes.
-        private void clearTreeView()
+        // 
+        private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            Invoke(new Action(() =>
+            if (!String.IsNullOrEmpty(treeView.SelectedNode.Text))
             {
-                treeView.BeginUpdate();
-                treeView.Nodes.Clear();
-                treeView.EndUpdate();
-            }));
+                msgContentTextBox.Text = treeView.SelectedNode.Text;
+            }
         }
 
         // Read through the log file and create nodes.
@@ -91,6 +88,7 @@ namespace Anteater
                 string msgType = MessageTypes.setMsgType(msgText, messageTypes);
                 CreateMsgNode(lineCount, lineNumber, msgText, msgType);
             }
+            LogsFile.Close();
         }
 
         // Create category nodes so that we can categorize log messages.
@@ -187,9 +185,21 @@ namespace Anteater
 
                     }
                 }
+                treeView.ShowNodeToolTips = false;
                 treeView.EndUpdate();
             }));
             System.Threading.Thread.Sleep(100);
+        }
+
+        // Clears the treeView control of all nodes.
+        private void clearTreeView()
+        {
+            Invoke(new Action(() =>
+            {
+                treeView.BeginUpdate();
+                treeView.Nodes.Clear();
+                treeView.EndUpdate();
+            }));
         }
     }
 }

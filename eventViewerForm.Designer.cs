@@ -29,11 +29,13 @@
         private void InitializeComponent()
         {
             this.treeView = new System.Windows.Forms.TreeView();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuStrip1.SuspendLayout();
+            this.msgContentTextBox = new System.Windows.Forms.RichTextBox();
+            this.msgContentsLabel = new System.Windows.Forms.Label();
+            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // treeView
@@ -44,18 +46,19 @@
             this.treeView.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.treeView.Location = new System.Drawing.Point(12, 34);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(878, 470);
+            this.treeView.Size = new System.Drawing.Size(878, 445);
             this.treeView.TabIndex = 0;
+            this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
             // 
-            // menuStrip1
+            // menuStrip
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(902, 24);
-            this.menuStrip1.TabIndex = 1;
-            this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(902, 24);
+            this.menuStrip.TabIndex = 1;
+            this.menuStrip.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
@@ -69,29 +72,53 @@
             // openLogToolStripMenuItem
             // 
             this.openLogToolStripMenuItem.Name = "openLogToolStripMenuItem";
-            this.openLogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openLogToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.openLogToolStripMenuItem.Text = "Open Log";
             this.openLogToolStripMenuItem.Click += new System.EventHandler(this.openLogToolStripMenuItem_Click);
             // 
             // closeLogToolStripMenuItem
             // 
             this.closeLogToolStripMenuItem.Name = "closeLogToolStripMenuItem";
-            this.closeLogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeLogToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.closeLogToolStripMenuItem.Text = "Close Log";
             this.closeLogToolStripMenuItem.Click += new System.EventHandler(this.closeLogToolStripMenuItem_Click);
+            // 
+            // msgContentTextBox
+            // 
+            this.msgContentTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.msgContentTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.msgContentTextBox.Location = new System.Drawing.Point(12, 498);
+            this.msgContentTextBox.Name = "msgContentTextBox";
+            this.msgContentTextBox.ReadOnly = true;
+            this.msgContentTextBox.Size = new System.Drawing.Size(878, 70);
+            this.msgContentTextBox.TabIndex = 2;
+            this.msgContentTextBox.Text = "";
+            // 
+            // msgContentsLabel
+            // 
+            this.msgContentsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.msgContentsLabel.AutoSize = true;
+            this.msgContentsLabel.Location = new System.Drawing.Point(12, 482);
+            this.msgContentsLabel.Name = "msgContentsLabel";
+            this.msgContentsLabel.Size = new System.Drawing.Size(150, 13);
+            this.msgContentsLabel.TabIndex = 3;
+            this.msgContentsLabel.Text = "Selected Message\'s Contents:";
             // 
             // eventViewerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(902, 516);
+            this.ClientSize = new System.Drawing.Size(902, 580);
+            this.Controls.Add(this.msgContentsLabel);
+            this.Controls.Add(this.msgContentTextBox);
             this.Controls.Add(this.treeView);
-            this.Controls.Add(this.menuStrip1);
-            this.MainMenuStrip = this.menuStrip1;
+            this.Controls.Add(this.menuStrip);
+            this.MainMenuStrip = this.menuStrip;
             this.Name = "eventViewerForm";
             this.Text = "Anteater";
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -100,9 +127,11 @@
         #endregion
 
         private System.Windows.Forms.TreeView treeView;
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openLogToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeLogToolStripMenuItem;
+        private System.Windows.Forms.RichTextBox msgContentTextBox;
+        private System.Windows.Forms.Label msgContentsLabel;
     }
 }

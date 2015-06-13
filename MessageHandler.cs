@@ -10,6 +10,7 @@ namespace Anteater
 {
     public static class MessageTypes
     {
+        // Return an array of available message types.
         public static string[] getMsgTypes()
         {
             var streamData = new List<string>();
@@ -28,6 +29,7 @@ namespace Anteater
             return streamDataFinal;
         }
 
+        // Return a string containing the message's type.
         public static string setMsgType(string msg, string[] msgTypes)
         {
             string type = null;
