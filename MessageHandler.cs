@@ -30,14 +30,16 @@ namespace Anteater
 
         public static string msgType(string msg, string[] msgTypes)
         {
-            string message = msg;
-            string[] messageTypes = msgTypes;
-            string type = string.Empty;
-            foreach (string s in msgTypes)
+            string type = null;
+            if (msgTypes != null)
             {
-                if (msg.Contains(s))
+                foreach (string s in msgTypes)
                 {
-                    type = s;
+                    if (msg.Contains(s))
+                    {
+                        type = s;
+                        return type;
+                    }
                 }
             }
             return type;
