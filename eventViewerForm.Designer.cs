@@ -43,10 +43,11 @@
             this.treeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.treeView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.treeView.Location = new System.Drawing.Point(12, 34);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(878, 445);
+            this.treeView.ShowNodeToolTips = true;
+            this.treeView.Size = new System.Drawing.Size(878, 443);
             this.treeView.TabIndex = 0;
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
             // 
@@ -99,11 +100,12 @@
             // 
             this.msgContentsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.msgContentsLabel.AutoSize = true;
-            this.msgContentsLabel.Location = new System.Drawing.Point(12, 482);
+            this.msgContentsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.msgContentsLabel.Location = new System.Drawing.Point(12, 480);
             this.msgContentsLabel.Name = "msgContentsLabel";
-            this.msgContentsLabel.Size = new System.Drawing.Size(150, 13);
+            this.msgContentsLabel.Size = new System.Drawing.Size(106, 15);
             this.msgContentsLabel.TabIndex = 3;
-            this.msgContentsLabel.Text = "Selected Message\'s Contents:";
+            this.msgContentsLabel.Text = "Message Content:";
             // 
             // eventViewerForm
             // 

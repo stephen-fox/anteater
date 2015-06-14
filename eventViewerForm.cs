@@ -47,7 +47,7 @@ namespace Anteater
 
             if (openLogFileDialog.ShowDialog() == DialogResult.OK)
             {
-                clearTreeView();
+                clearFormView();
                 string filePath = openLogFileDialog.FileName;
                 BackgroundWorker bgw = new BackgroundWorker();
                 bgw.DoWork += (ob, evArgs) => ParseFile(filePath);
@@ -58,15 +58,27 @@ namespace Anteater
         // Remove all nodes from the treeView becuase the user asked nicely.
         private void closeLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            clearTreeView();
+            clearFormView();
         }
 
-        // 
+        // Do things when a node in the treeView is selected by the user.
         private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (!String.IsNullOrEmpty(treeView.SelectedNode.Text))
+            TreeNode selectedNode = treeView.SelectedNode;
+            if (!String.IsNullOrEmpty(selectedNode.Text) 
+                && treeView.SelectedNode.Tag != null)
             {
-                msgContentTextBox.Text = treeView.SelectedNode.Text;
+                msgContentTextBox.Text = selectedNode.Text;
+                msgContentTextBox.BackColor = selectedNode.BackColor;
+                msgContentsLabel.Text = "Content of " +  "\""
+                                        + selectedNode.Tag.ToString()
+                                        + "\"" + "-type Message:";
+            }
+            else
+            {
+                msgContentTextBox.Clear();
+                msgContentTextBox.BackColor = Color.Empty;
+                msgContentsLabel.Text = "Message Content:";
             }
         }
 
@@ -79,14 +91,17 @@ namespace Anteater
             
             int lineCount = File.ReadLines(inputfile).Count();
             int lineNumber = 0;
-            string[] messageTypes = MessageTypes.getMsgTypes();
+            string[] messageTypes = MessageInfo.getMsgTypes();
+            string[] importantMsgs = MessageInfo.getImportantMsgs();
             CreateCategoryNodes(messageTypes);
             while (!LogsFile.EndOfStream)
             {
                 lineNumber = lineNumber + 1;
                 string msgText = LogsFile.ReadLine();
-                string msgType = MessageTypes.setMsgType(msgText, messageTypes);
-                CreateMsgNode(lineCount, lineNumber, msgText, msgType);
+                string msgType = MessageInfo.setMsgType(msgText, messageTypes);
+                bool msgImportance = MessageInfo.isImportant(msgText, importantMsgs);
+                CreateMsgNode(lineCount, lineNumber, msgText, 
+                                msgType, msgImportance);
             }
             LogsFile.Close();
         }
@@ -94,9 +109,9 @@ namespace Anteater
         // Create category nodes so that we can categorize log messages.
         private void CreateCategoryNodes(string[] msgTypes)
         {
-            foreach (string type in msgTypes)
+            foreach (string typeText in msgTypes)
             {
-                TreeNode typeNode = new TreeNode(type);
+                TreeNode typeNode = new TreeNode(typeText);
                 typeNode.Name = typeNode.Text;
                 typeNode.Tag = null;
                 AuditNodeBuffer(typeNode, 1, 2);
@@ -110,12 +125,17 @@ namespace Anteater
         }
         
         // Create nodes for individual log messages.
-        private void CreateMsgNode(int lineCount, int lineNumber, 
-                                    string msgText, string msgType)
+        private void CreateMsgNode(int lineCount, int lineNumber, string msgText,
+                                     string msgType, bool msgImportance)
         {
             string msgNodeText = "Line " + lineNumber + ": " + msgText;
             TreeNode messageNode = new TreeNode(msgNodeText);
             messageNode.Name = messageNode.Text;
+            if (msgImportance == true)
+            {
+                // Color the node if it is important.
+                messageNode.BackColor = Color.Yellow;
+            }
             string allLogMsgs = "All Log Messages";
             if (!String.IsNullOrEmpty(msgType))
             {
@@ -191,9 +211,12 @@ namespace Anteater
             System.Threading.Thread.Sleep(100);
         }
 
-        // Clears the treeView control of all nodes.
-        private void clearTreeView()
+        // Clears common controls in the form.
+        private void clearFormView()
         {
+            msgContentsLabel.Text = "Message Content:";
+            msgContentTextBox.Clear();
+            msgContentTextBox.BackColor = Color.Empty;
             Invoke(new Action(() =>
             {
                 treeView.BeginUpdate();
