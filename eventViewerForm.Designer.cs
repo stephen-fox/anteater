@@ -1,6 +1,6 @@
 ﻿namespace Anteater
 {
-    partial class eventViewerForm
+    partial class EventViewerForm
     {
         /// <summary>
         /// Required designer variable.
@@ -35,6 +35,8 @@
             this.closeLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.msgContentTextBox = new System.Windows.Forms.RichTextBox();
             this.msgContentsLabel = new System.Windows.Forms.Label();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,7 +56,8 @@
             // menuStrip
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.toolsToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(902, 24);
@@ -107,7 +110,22 @@
             this.msgContentsLabel.TabIndex = 3;
             this.msgContentsLabel.Text = "Message Content:";
             // 
-            // eventViewerForm
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.optionsToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Text = "Options";
+            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
+            // 
+            // EventViewerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -117,7 +135,7 @@
             this.Controls.Add(this.treeView);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
-            this.Name = "eventViewerForm";
+            this.Name = "EventViewerForm";
             this.Text = "Anteater";
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
@@ -135,5 +153,7 @@
         private System.Windows.Forms.ToolStripMenuItem closeLogToolStripMenuItem;
         private System.Windows.Forms.RichTextBox msgContentTextBox;
         private System.Windows.Forms.Label msgContentsLabel;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
     }
 }

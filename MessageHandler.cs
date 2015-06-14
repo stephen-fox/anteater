@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
+using System.Collections;
+using System.Collections.Specialized;
 
 namespace Anteater
 {
@@ -35,8 +37,12 @@ namespace Anteater
         // Return an array of available message types.
         public static string[] getMsgTypes()
         {
-            string resFilename = "messageTypes.txt";
-            string[] msgTypes = ResourceReader.readResources(resFilename);
+            //string resFilename = "messageTypes.txt";
+            //string[] msgTypes = ResourceReader.readResources(resFilename);
+            StringCollection mtSettings = 
+                                    Properties.Settings.Default.messageTypes;
+            string [] msgTypes = new string[mtSettings.Count];
+            mtSettings.CopyTo( msgTypes,0 );
             return msgTypes;
         }
 
@@ -58,20 +64,24 @@ namespace Anteater
             return type;
         }
 
-        //
-        public static string[] getImportantMsgs()
+        // Returns an array of interesting strings.
+        public static string[] getInterestingMsgs()
         {
-            string resFilename = "stringsOfInterest.txt";
-            string[] importantMsgs = ResourceReader.readResources(resFilename);
-            return importantMsgs;
+            //string resFilename = "stringsOfInterest.txt";
+            //string[] importantMsgs = ResourceReader.readResources(resFilename);
+            StringCollection intStrsSettings = 
+                                Properties.Settings.Default.interestingStrings;
+            string[] interestingMsgs = new string[intStrsSettings.Count];
+            intStrsSettings.CopyTo(interestingMsgs, 0);
+            return interestingMsgs;
         }
 
-        //
-        public static bool isImportant(string msg, string[] importantMsgs)
+        // Return true if the message is interesting.
+        public static bool isInteresting(string msg, string[] interestingMsgs)
         {
-            if (importantMsgs != null)
+            if (interestingMsgs != null)
             {
-                foreach (string s in importantMsgs)
+                foreach (string s in interestingMsgs)
                 {
                     if (msg.Contains(s))
                     {

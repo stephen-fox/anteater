@@ -1,7 +1,60 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Anteater.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="messageTypes" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;SocketTimeoutException&lt;/string&gt;
+  &lt;string&gt;KeepAlive&lt;/string&gt;
+  &lt;string&gt;MLAPI&lt;/string&gt;
+  &lt;string&gt;JSON&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="interestingStrings" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;Connecting&lt;/string&gt;
+  &lt;string&gt;connecting&lt;/string&gt;
+  &lt;string&gt;Connected&lt;/string&gt;
+  &lt;string&gt;connected&lt;/string&gt;
+  &lt;string&gt;Created&lt;/string&gt;
+  &lt;string&gt;created&lt;/string&gt;
+  &lt;string&gt;Creating&lt;/string&gt;
+  &lt;string&gt;creating&lt;/string&gt;
+  &lt;string&gt;Destroying&lt;/string&gt;
+  &lt;string&gt;destroying&lt;/string&gt;
+  &lt;string&gt;Destroyed&lt;/string&gt;
+  &lt;string&gt;destroyed&lt;/string&gt;
+  &lt;string&gt;Error&lt;/string&gt;
+  &lt;string&gt;error&lt;/string&gt;
+  &lt;string&gt;Exception&lt;/string&gt;
+  &lt;string&gt;exception&lt;/string&gt;
+  &lt;string&gt;Exist&lt;/string&gt;
+  &lt;string&gt;exist&lt;/string&gt;
+  &lt;string&gt;Exit&lt;/string&gt;
+  &lt;string&gt;exit&lt;/string&gt;
+  &lt;string&gt;Failed&lt;/string&gt;
+  &lt;string&gt;failed&lt;/string&gt;
+  &lt;string&gt;Initialized&lt;/string&gt;
+  &lt;string&gt;initialized&lt;/string&gt;
+  &lt;string&gt;Initializing&lt;/string&gt;
+  &lt;string&gt;initializing&lt;/string&gt;
+  &lt;string&gt;Network&lt;/string&gt;
+  &lt;string&gt;network&lt;/string&gt;
+  &lt;string&gt;Remove&lt;/string&gt;
+  &lt;string&gt;remove&lt;/string&gt;
+  &lt;string&gt;Removed&lt;/string&gt;
+  &lt;string&gt;removed&lt;/string&gt;
+  &lt;string&gt;Removing&lt;/string&gt;
+  &lt;string&gt;removing&lt;/string&gt;
+  &lt;string&gt;Stopping&lt;/string&gt;
+  &lt;string&gt;stopping&lt;/string&gt;
+  &lt;string&gt;Timed&lt;/string&gt;
+  &lt;string&gt;timed&lt;/string&gt;
+  &lt;string&gt;Trying&lt;/string&gt;
+  &lt;string&gt;trying&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

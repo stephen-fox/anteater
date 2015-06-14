@@ -12,9 +12,9 @@ using System.Windows.Forms;
 
 namespace Anteater
 {
-    public partial class eventViewerForm : Form
+    public partial class EventViewerForm : Form
     {
-        public eventViewerForm()
+        public EventViewerForm()
         {
             InitializeComponent();
         }
@@ -55,12 +55,6 @@ namespace Anteater
             }
         }
 
-        // Remove all nodes from the treeView becuase the user asked nicely.
-        private void closeLogToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            clearFormView();
-        }
-
         // Do things when a node in the treeView is selected by the user.
         private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -82,6 +76,19 @@ namespace Anteater
             }
         }
 
+        //
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SettingsForm settingsForm = new SettingsForm();
+            settingsForm.Show();
+        }
+
+        // Remove all nodes from the treeView becuase the user asked nicely.
+        private void closeLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            clearFormView();
+        }
+
         // Read through the log file and create nodes.
         private void ParseFile(string inputfile)
         {
@@ -92,16 +99,16 @@ namespace Anteater
             int lineCount = File.ReadLines(inputfile).Count();
             int lineNumber = 0;
             string[] messageTypes = MessageInfo.getMsgTypes();
-            string[] importantMsgs = MessageInfo.getImportantMsgs();
+            string[] importantMsgs = MessageInfo.getInterestingMsgs();
             CreateCategoryNodes(messageTypes);
             while (!LogsFile.EndOfStream)
             {
                 lineNumber = lineNumber + 1;
                 string msgText = LogsFile.ReadLine();
                 string msgType = MessageInfo.setMsgType(msgText, messageTypes);
-                bool msgImportance = MessageInfo.isImportant(msgText, importantMsgs);
+                bool msgIsInteresting = MessageInfo.isInteresting(msgText, importantMsgs);
                 CreateMsgNode(lineCount, lineNumber, msgText, 
-                                msgType, msgImportance);
+                                msgType, msgIsInteresting);
             }
             LogsFile.Close();
         }
@@ -126,12 +133,12 @@ namespace Anteater
         
         // Create nodes for individual log messages.
         private void CreateMsgNode(int lineCount, int lineNumber, string msgText,
-                                     string msgType, bool msgImportance)
+                                     string msgType, bool msgIsInteresting)
         {
             string msgNodeText = "Line " + lineNumber + ": " + msgText;
             TreeNode messageNode = new TreeNode(msgNodeText);
             messageNode.Name = messageNode.Text;
-            if (msgImportance == true)
+            if (msgIsInteresting == true)
             {
                 // Color the node if it is important.
                 messageNode.BackColor = Color.Yellow;

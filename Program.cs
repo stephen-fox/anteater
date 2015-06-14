@@ -16,7 +16,7 @@ namespace Anteater
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new eventViewerForm());
+            Application.Run(new EventViewerForm());
         }
     }
 }
