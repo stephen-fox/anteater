@@ -19,6 +19,8 @@ namespace Anteater
             InitializeComponent();
         }
 
+        public static string gstrCurrentFilepath;
+        public static bool gboolFileIsOpen;
         // Create an Open file dialog so the user can select a log file to view.
         private void openLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -47,11 +49,26 @@ namespace Anteater
 
             if (openLogFileDialog.ShowDialog() == DialogResult.OK)
             {
-                clearFormView();
-                string filePath = openLogFileDialog.FileName;
+                ClearFormView();
+                OpenFile(openLogFileDialog.FileName);
+            }
+        }
+
+        // Make sure the file exists. If it does, then call ParseFile.
+        private void OpenFile(string filePath)
+        {
+            if (!String.IsNullOrEmpty(filePath)
+                && File.Exists(filePath))
+            {
+                gstrCurrentFilepath = filePath;
                 BackgroundWorker bgw = new BackgroundWorker();
-                bgw.DoWork += (ob, evArgs) => ParseFile(filePath);
+                bgw.DoWork += (ob, evArgs) => ParseFile(gstrCurrentFilepath);
                 bgw.RunWorkerAsync();
+                this.Text = "Anteater - " + Path.GetFileName(gstrCurrentFilepath);
+            }
+            else
+            {
+                MessageBox.Show("Unable to open the selected file. Please try again.");
             }
         }
 
@@ -64,7 +81,7 @@ namespace Anteater
             {
                 msgContentTextBox.Text = selectedNode.Text;
                 msgContentTextBox.BackColor = selectedNode.BackColor;
-                msgContentsLabel.Text = "Content of " +  "\""
+                msgContentGroupBox.Text = "Content of " +  "\""
                                         + selectedNode.Tag.ToString()
                                         + "\"" + "-type Message:";
             }
@@ -72,45 +89,78 @@ namespace Anteater
             {
                 msgContentTextBox.Clear();
                 msgContentTextBox.BackColor = Color.Empty;
-                msgContentsLabel.Text = "Message Content:";
+                msgContentGroupBox.Text = "Message Content:";
             }
         }
 
-        //
+        // Open the Settings form when the Options button is clicked.
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SettingsForm settingsForm = new SettingsForm();
-            settingsForm.Show();
+            // Open the form. If the form's result is OK, then try to
+            // refresh the form view.
+            if (settingsForm.ShowDialog() == DialogResult.OK)
+            {
+                RefreshFormView();
+            }
         }
 
-        // Remove all nodes from the treeView becuase the user asked nicely.
+        // Remove all nodes from the treeView and reset flags becuase 
+        // the user asked nicely.
         private void closeLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            clearFormView();
+            ClearFormView();
+            this.Text = "Anteater";
+            gstrCurrentFilepath = null;
+            gboolFileIsOpen = false;
+        }
+
+        // Refreshes the main view in certain situations.
+        private void RefreshFormView()
+        {
+            if (!String.IsNullOrEmpty(gstrCurrentFilepath)
+                && File.Exists(gstrCurrentFilepath)
+                && gboolFileIsOpen == true)
+            {
+                ClearFormView();
+                OpenFile(gstrCurrentFilepath);
+            }
+        }
+
+        // Clears common controls in the form.
+        private void ClearFormView()
+        {
+            msgContentGroupBox.Text = "Message Content:";
+            msgContentTextBox.Clear();
+            msgContentTextBox.BackColor = Color.Empty;
+            treeView.BeginUpdate();
+            treeView.Nodes.Clear();
+            treeView.EndUpdate();
         }
 
         // Read through the log file and create nodes.
-        private void ParseFile(string inputfile)
+        private void ParseFile(string filePath)
         {
-            FileStream logFileStream = new FileStream(inputfile, FileMode.Open, 
+            FileStream logFileStream = new FileStream(filePath, FileMode.Open, 
                                            FileAccess.Read, FileShare.ReadWrite);
-            StreamReader LogsFile = new StreamReader(logFileStream);
+            StreamReader LogFile = new StreamReader(logFileStream);
             
-            int lineCount = File.ReadLines(inputfile).Count();
+            int lineCount = File.ReadLines(filePath).Count();
             int lineNumber = 0;
             string[] messageTypes = MessageInfo.getMsgTypes();
             string[] importantMsgs = MessageInfo.getInterestingMsgs();
             CreateCategoryNodes(messageTypes);
-            while (!LogsFile.EndOfStream)
+            while (!LogFile.EndOfStream)
             {
                 lineNumber = lineNumber + 1;
-                string msgText = LogsFile.ReadLine();
-                string msgType = MessageInfo.setMsgType(msgText, messageTypes);
-                bool msgIsInteresting = MessageInfo.isInteresting(msgText, importantMsgs);
+                string msgText = LogFile.ReadLine();
+                string msgType = Message.setMsgType(msgText, messageTypes);
+                bool msgIsInteresting = Message.isInteresting(msgText, importantMsgs);
                 CreateMsgNode(lineCount, lineNumber, msgText, 
                                 msgType, msgIsInteresting);
             }
-            LogsFile.Close();
+            LogFile.Close();
+            gboolFileIsOpen = true;
         }
 
         // Create category nodes so that we can categorize log messages.
@@ -216,20 +266,6 @@ namespace Anteater
                 treeView.EndUpdate();
             }));
             System.Threading.Thread.Sleep(100);
-        }
-
-        // Clears common controls in the form.
-        private void clearFormView()
-        {
-            msgContentsLabel.Text = "Message Content:";
-            msgContentTextBox.Clear();
-            msgContentTextBox.BackColor = Color.Empty;
-            Invoke(new Action(() =>
-            {
-                treeView.BeginUpdate();
-                treeView.Nodes.Clear();
-                treeView.EndUpdate();
-            }));
         }
     }
 }

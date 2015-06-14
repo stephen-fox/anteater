@@ -32,20 +32,8 @@ namespace Anteater
         }
     }
 
-    public static class MessageInfo
+    public static class Message
     {
-        // Return an array of available message types.
-        public static string[] getMsgTypes()
-        {
-            //string resFilename = "messageTypes.txt";
-            //string[] msgTypes = ResourceReader.readResources(resFilename);
-            StringCollection mtSettings = 
-                                    Properties.Settings.Default.messageTypes;
-            string [] msgTypes = new string[mtSettings.Count];
-            mtSettings.CopyTo( msgTypes,0 );
-            return msgTypes;
-        }
-
         // Return a string containing the message's type.
         public static string setMsgType(string msg, string[] msgTypes)
         {
@@ -64,18 +52,6 @@ namespace Anteater
             return type;
         }
 
-        // Returns an array of interesting strings.
-        public static string[] getInterestingMsgs()
-        {
-            //string resFilename = "stringsOfInterest.txt";
-            //string[] importantMsgs = ResourceReader.readResources(resFilename);
-            StringCollection intStrsSettings = 
-                                Properties.Settings.Default.interestingStrings;
-            string[] interestingMsgs = new string[intStrsSettings.Count];
-            intStrsSettings.CopyTo(interestingMsgs, 0);
-            return interestingMsgs;
-        }
-
         // Return true if the message is interesting.
         public static bool isInteresting(string msg, string[] interestingMsgs)
         {
@@ -90,6 +66,29 @@ namespace Anteater
                 }
             }
             return false;
+        }
+    }
+
+    public static class MessageInfo
+    {
+        // Return an array of available message types.
+        public static string[] getMsgTypes()
+        {
+            StringCollection mtSettings = 
+                Properties.Settings.Default.messageTypes;
+            string [] msgTypes = new string[mtSettings.Count];
+            mtSettings.CopyTo( msgTypes,0 );
+            return msgTypes;
+        }
+
+        // Returns an array of interesting strings.
+        public static string[] getInterestingMsgs()
+        {
+            StringCollection intStrsSettings = 
+                Properties.Settings.Default.interestingStrings;
+            string[] interestingMsgs = new string[intStrsSettings.Count];
+            intStrsSettings.CopyTo(interestingMsgs, 0);
+            return interestingMsgs;
         }
     }
 }
