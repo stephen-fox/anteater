@@ -171,13 +171,14 @@ namespace Anteater
                 TreeNode typeNode = new TreeNode(typeText);
                 typeNode.Name = typeNode.Text;
                 typeNode.Tag = null;
+                // Give junk lineNumber and lineCount. We only want to add
+                // to the buffer, not add to and dump the buffer!
                 AuditNodeBuffer(typeNode, 1, 2);
             }
             TreeNode fullLogNode = new TreeNode("All Log Messages");
             fullLogNode.Name = fullLogNode.Text;
             fullLogNode.Tag = null;
-            // Give junk lineNumber and lineCount. We only want to add
-            // to the buffer, not add to and dump the buffer!
+            // Give junk lineNumber and lineCount again.
             AuditNodeBuffer(fullLogNode, 1, 2);
         }
         
